@@ -15,6 +15,7 @@ with DAG(
     start_date=datetime(2025, 9, 11),
     schedule_interval="@daily",
     catchup=False,
+    tags=["ecommerce", "elt"],
 ) as dag:
 
     generate_data = BashOperator(
@@ -22,4 +23,10 @@ with DAG(
         bash_command="python /opt/airflow/data_generator/generate_data.py ",
     )
 
-    generate_data
+
+    load_to_bigquery = BashOperator(
+        task_id="load_to_bigquery",
+        bash_command="python /opt/airflow/scripts/bq_loader.py",
+    )
+
+    generate_data >> load_to_bigquery
