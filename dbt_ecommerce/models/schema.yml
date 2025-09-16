@@ -1,0 +1,62 @@
+version: 2
+
+sources:
+  - name: raw
+    database: purwadika
+    schema: jcdeol005_finalproject_eko_raw
+    tables:
+      - name: suppliers
+      - name: users
+      - name: products
+      - name: orders
+      - name: order_items
+      - name: payments
+      - name: shipments
+      - name: reviews
+
+models:
+  - name: stg_suppliers
+    columns:
+      - name: supplier_id
+        tests: [not_null, unique]
+
+  - name: stg_users
+    columns:
+      - name: user_id
+        tests: [not_null, unique]
+
+  - name: stg_products
+    columns:
+      - name: product_id
+        tests: [not_null, unique]
+
+  - name: stg_orders
+    columns:
+      - name: order_id
+        tests: [not_null, unique]
+
+  - name: stg_order_items
+    columns:
+      - name: order_item_id
+        tests: [not_null, unique]
+      - name: line_total
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "{{ column_name }} >= 0"
+
+  - name: stg_payments
+    columns:
+      - name: payment_id
+        tests: [not_null, unique]
+
+  - name: stg_shipments
+    columns:
+      - name: shipment_id
+        tests: [not_null, unique]
+
+  - name: stg_reviews
+    columns:
+      - name: review_id
+        tests: [not_null, unique]

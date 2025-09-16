@@ -29,4 +29,17 @@ with DAG(
         bash_command="python /opt/airflow/scripts/bq_loader.py",
     )
 
-    generate_data >> load_to_bigquery
+
+    run_dbt_staging = BashOperator(
+        task_id="run_dbt_staging",
+        bash_command=(
+            "export PATH=$PATH:/home/airflow/.local/bin && "
+            "export DBT_PROFILES_DIR=/opt/airflow/dbt_ecommerce && "
+            "cd /opt/airflow/dbt_ecommerce && "
+            "dbt run --select staging && "
+            "dbt test --select staging"
+        ),
+        env={"GOOGLE_APPLICATION_CREDENTIALS": "/opt/airflow/keys/purwadika-502e43f1636d.json"}
+    )
+
+    generate_data >> load_to_bigquery >> run_dbt_staging

@@ -9,7 +9,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   webserver:
-    image: apache/airflow:2.7.1-python3.9
+    build: .
+    image: final_project_airflow:latest   
     restart: always
     depends_on:
       - postgres
@@ -19,19 +20,22 @@ services:
       AIRFLOW__CORE__FERNET_KEY: ""
       AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
-      _PIP_ADDITIONAL_REQUIREMENTS: >
-        google-cloud-bigquery pandas pyarrow faker
+      GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/keys/purwadika-502e43f1636d.json
     volumes:
       - ./dags:/opt/airflow/dags
       - ./data_generator:/opt/airflow/data_generator
+      - ./scripts:/opt/airflow/scripts
+      - ./dbt_ecommerce:/opt/airflow/dbt_ecommerce
       - ./data:/opt/airflow/data
       - ./logs:/opt/airflow/logs
+      - ./keys:/opt/airflow/keys
     ports:
       - "8080:8080"
     command: webserver
 
   scheduler:
-    image: apache/airflow:2.7.1-python3.9
+    build: .
+    image: final_project_airflow:latest   
     restart: always
     depends_on:
       - postgres
@@ -41,13 +45,15 @@ services:
       AIRFLOW__CORE__FERNET_KEY: ""
       AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
-      _PIP_ADDITIONAL_REQUIREMENTS: >
-        google-cloud-bigquery pandas pyarrow faker
+      GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/keys/purwadika-502e43f1636d.json
     volumes:
       - ./dags:/opt/airflow/dags
       - ./data_generator:/opt/airflow/data_generator
+      - ./scripts:/opt/airflow/scripts
+      - ./dbt_ecommerce:/opt/airflow/dbt_ecommerce
       - ./data:/opt/airflow/data
       - ./logs:/opt/airflow/logs
+      - ./keys:/opt/airflow/keys
     command: scheduler
 
 volumes:

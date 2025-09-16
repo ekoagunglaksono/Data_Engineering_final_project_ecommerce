@@ -3,3 +3,5 @@ purwadika-502e43f1636d.json
 data/
 __pycache__
 logs/
+target/
+dbt_packages/
