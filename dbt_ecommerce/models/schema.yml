@@ -15,6 +15,7 @@ sources:
       - name: reviews
 
 models:
+# --- Staging models ---
   - name: stg_suppliers
     columns:
       - name: supplier_id
@@ -60,3 +61,60 @@ models:
     columns:
       - name: review_id
         tests: [not_null, unique]
+
+# --- Warehouse models ---
+  - name: dim_date
+    description: "Date dimension for DWH"
+    tests:
+      - not_null:
+          column_name: date
+  - name: dim_users
+    description: "Customers dimension"
+    columns:
+      - name: user_id
+        tests:
+          - not_null
+          - unique
+      - name: first_order_date
+        tests:
+          - not_null
+  - name: dim_products
+    description: "Products dimension"
+    columns:
+      - name: product_id
+        tests:
+          - not_null
+          - unique
+  - name: dim_suppliers
+    description: "Suppliers dimension"
+    columns:
+      - name: supplier_id
+        tests:
+          - not_null
+          - unique
+  - name: dim_payments
+    description: "Payments dimension"
+    columns:
+      - name: payment_id
+        tests:
+          - not_null
+          - unique
+  - name: fact_orders
+    description: "Fact table at order granularity"
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - unique
+      - name: user_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_users')
+              field: user_id
+      - name: order_date
+        tests:
+          - not_null
+      - name: order_total
+        tests:
+          - not_null

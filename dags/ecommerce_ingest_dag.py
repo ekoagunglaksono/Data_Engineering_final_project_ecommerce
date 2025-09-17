@@ -42,4 +42,18 @@ with DAG(
         env={"GOOGLE_APPLICATION_CREDENTIALS": "/opt/airflow/keys/purwadika-502e43f1636d.json"}
     )
 
-    generate_data >> load_to_bigquery >> run_dbt_staging
+
+    run_dbt_warehouse = BashOperator(
+        task_id="run_dbt_warehouse",
+        bash_command=(
+            "export PATH=$PATH:/home/airflow/.local/bin && "
+            "export DBT_PROFILES_DIR=/opt/airflow/dbt_ecommerce && "
+            "cd /opt/airflow/dbt_ecommerce && "
+            "dbt run --select warehouse && "
+            "dbt test --select warehouse"
+    ),
+    env={"GOOGLE_APPLICATION_CREDENTIALS": "/opt/airflow/keys/purwadika-502e43f1636d.json"}
+)
+
+
+    generate_data >> load_to_bigquery >> run_dbt_staging >> run_dbt_warehouse

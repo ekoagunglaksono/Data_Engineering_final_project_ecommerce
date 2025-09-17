@@ -14,3 +14,6 @@ models:
     staging:
       +schema: jcdeol005_finalproject_eko_staging
       +materialized: table
+    warehouse:
+      +schema: jcdeol005_finalproject_eko_dw
+      +materialized: table
