@@ -186,6 +186,8 @@ models:
     columns:
       - name: supplier_id
         tests: [not_null]
+      - name: supplier_name
+        tests: [not_null]
       - name: total_products
       - name: avg_price
 
