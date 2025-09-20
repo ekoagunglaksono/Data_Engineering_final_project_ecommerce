@@ -68,6 +68,7 @@ models:
     tests:
       - not_null:
           column_name: date
+
   - name: dim_users
     description: "Customers dimension"
     columns:
@@ -78,6 +79,7 @@ models:
       - name: first_order_date
         tests:
           - not_null
+
   - name: dim_products
     description: "Products dimension"
     columns:
@@ -85,6 +87,7 @@ models:
         tests:
           - not_null
           - unique
+
   - name: dim_suppliers
     description: "Suppliers dimension"
     columns:
@@ -92,6 +95,7 @@ models:
         tests:
           - not_null
           - unique
+
   - name: dim_payments
     description: "Payments dimension"
     columns:
@@ -99,6 +103,7 @@ models:
         tests:
           - not_null
           - unique
+
   - name: fact_orders
     description: "Fact table at order granularity"
     columns:
@@ -110,11 +115,84 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('dim_users')
-              field: user_id
+              arguments:
+                to: ref('dim_users')
+                field: user_id
       - name: order_date
         tests:
           - not_null
       - name: order_total
         tests:
           - not_null
+
+# --- Marts models ---
+  - name: mart_customer_retention
+    description: "Revenue contribution from new vs returning customers"
+    columns:
+      - name: year_month
+        tests: [not_null]
+      - name: new_customer_revenue
+      - name: returning_customer_revenue
+      - name: new_customers
+      - name: returning_customers
+
+  - name: mart_churn_proxy
+    description: "Churn proxy based on last 90 days activity"
+    columns:
+      - name: snapshot_date
+        tests: [not_null]
+      - name: churned_customers
+      - name: active_customers
+      - name: churn_rate_pct
+
+  - name: mart_revenue_trend
+    description: "Revenue and order trend over time"
+    columns:
+      - name: year_month
+        tests: [not_null]
+      - name: total_revenue
+      - name: total_orders
+      - name: unique_customers
+
+  - name: mart_payment_distribution
+    description: "Payment status distribution"
+    columns:
+      - name: payment_status
+        tests: [not_null]
+      - name: total_transactions
+      - name: total_amount
+
+  - name: mart_top_customers
+    description: "Top customers by revenue"
+    columns:
+      - name: user_id
+      - name: name
+        test: [not_null]
+      - name: total_spent
+      - name: total_orders
+
+  - name: mart_product_profile
+    description: "Profil katalog produk per bulan"
+    columns:
+      - name: year_month
+        tests: [not_null]
+      - name: total_products
+      - name: total_suppliers
+      - name: avg_price
+      - name: new_products_last_30d
+
+  - name: mart_supplier_contribution
+    description: "Supplier paling produktif berdasarkan jumlah produk"
+    columns:
+      - name: supplier_id
+        tests: [not_null]
+      - name: total_products
+      - name: avg_price
+
+  - name: mart_catalog_vs_orders
+    description: "Perbandingan pertumbuhan katalog produk dengan order"
+    columns:
+      - name: year_month
+        tests: [not_null]
+      - name: total_products
+      - name: total_orders

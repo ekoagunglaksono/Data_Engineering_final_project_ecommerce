@@ -32,11 +32,20 @@ def load_csv_to_bq():
         print(f"Membaca {file_name} ...")
         df = pd.read_csv(file_path)
 
+        # --- PATCH: normalisasi dtype ---
+        for col in df.columns:
+            if df[col].dtype == "object":
+                df[col] = pd.to_numeric(df[col], errors="ignore")
+
         table_id = f"{PROJECT_ID}.{DATASET_ID}.{table_name}"
         print(f"Upload {len(df)} baris ke {table_id}")
 
-        # Load ke BigQuery
-        job = client.load_table_from_dataframe(df, table_id)
+        # --- PATCH: job_config untuk konsistensi load ---
+        job_config = bigquery.LoadJobConfig(
+            write_disposition="WRITE_TRUNCATE"  
+        )
+
+        job = client.load_table_from_dataframe(df, table_id, job_config=job_config)
         job.result()  
 
         print(f"Selesai upload {table_name}")

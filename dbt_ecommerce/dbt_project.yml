@@ -17,3 +17,6 @@ models:
     warehouse:
       +schema: jcdeol005_finalproject_eko_dw
       +materialized: table
+    marts:
+      +schema: jcdeol005_finalproject_eko_marts
+      +materialized: table
